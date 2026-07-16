@@ -3,19 +3,22 @@ public:
     long long gcdSum(vector<int>& nums) {
         int n=nums.size();
         int maxi=0;
-        vector<int> prefixGcd(n);
+        priority_queue<int,vector<int>,greater<int>> minHeap;
+        priority_queue<int> maxHeap;
         for(int i=0; i<n; i++){
             maxi=max(maxi,nums[i]);
-            prefixGcd[i]=__gcd(maxi,nums[i]);
+            int gcd=__gcd(maxi,nums[i]);
+            minHeap.push(gcd);
+            maxHeap.push(gcd);
         }
-        sort(prefixGcd.begin(),prefixGcd.end());
-        int front=0;
-        int back=n-1;
+        int iterations=n/2;
         long long sum=0;
-        while(front < back){
-            sum += __gcd(prefixGcd[front],prefixGcd[back]);
-            front++;
-            back--;
+        for(int i=0; i<iterations; i++){
+            int larger=maxHeap.top();
+            maxHeap.pop();
+            int smaller=minHeap.top();
+            minHeap.pop();
+            sum += __gcd(larger,smaller);
         }
         return sum;
     }
