@@ -3,20 +3,21 @@ public:
     vector<int> findMissingElements(vector<int>& nums) {
         int n=nums.size();
         if(n==0)return vector<int>();
-        sort(nums.begin(),nums.end());
-        int n1=nums[0];
-        int n2=nums[n-1];
-        vector<int> temp(n2-n1+1);
-        vector<int> ans;
-        iota(temp.begin(),temp.end(),n1);
-        int j=0;
+        int end=*max_element(nums.begin(), nums.end());
+        int start=*min_element(nums.begin(),nums.end());
+        vector<int> freq(end-start+1, 0);
         for(int i=0; i<n; i++){
-            while(j<(n2-n1+1) && nums[i] != temp[j]){
-                ans.push_back(temp[j]);
-                j++;
-            }
-            j++;
+            freq[nums[i]-start]++;
         }
+
+        vector<int> ans;
+        for(int i=0; i<end-start+1; i++){
+            if(freq[i]==0){
+                ans.push_back(start+i);
+            }
+        }
+
         return ans;
+        
     }
 };
