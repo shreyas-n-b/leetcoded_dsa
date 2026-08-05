@@ -11,10 +11,10 @@ private:
 
     bool dfs(int node, vector<vector<int>>& adj, vector<int>& vis, 
     unordered_set<int>& buggyMethods){
-        vis[node]=1;
         if(buggyMethods.count(node)==1){
             return true;
         }
+        vis[node]=1;
         for(int v: adj[node]){
             if(!vis[v]){
                 if(dfs(v,adj,vis,buggyMethods)){
@@ -31,10 +31,9 @@ public:
         for(vector<int> invocation: invocations){
             adj[invocation[0]].push_back(invocation[1]);
         }
-        vector<int> vis(n,0);
         findBugs(k,adj,buggyMethods);
+        vector<int> vis(n,0);
         bool flag=false;
-
         
         for(int i=0; i<n; i++){
             if(buggyMethods.count(i)==1)continue;
