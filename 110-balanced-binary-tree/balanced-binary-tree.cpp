@@ -25,8 +25,7 @@ public:
         }
         int leftfactor=(root->left==nullptr)?0:mpp[root->left];
         int rightfactor=(root->right==nullptr)?0:mpp[root->right];
-        //int balFactor=leftfactor-rightfactor;
-        int balFactor=mpp[root->left]-mpp[root->right];
+        int balFactor=leftfactor-rightfactor;
         if(balFactor != 0 && balFactor != -1 && balFactor != 1)return false;
         return (helper(root->left) && helper(root->right));       
     }
