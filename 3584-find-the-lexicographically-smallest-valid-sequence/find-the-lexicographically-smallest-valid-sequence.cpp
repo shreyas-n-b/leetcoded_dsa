@@ -5,7 +5,7 @@ public:
         int M = word2.size();
         // Right[i] = max length of word2's suffix that can be formed
         // using word1[i+1...N-1]
-        int R = M - 1;
+        int R = M - 1; 
         int C = 0;
         vector<int> Right(N);
         for (int i = N - 1; i >= 0; i--) {
