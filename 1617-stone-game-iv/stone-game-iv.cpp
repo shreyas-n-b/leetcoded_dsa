@@ -1,27 +1,23 @@
 class Solution {
-    int dp[2][(int)1e5+1];
-    bool solveForAlice(int turn, int stonesLeft){
-        if(stonesLeft==0){
-            if(turn == 1){
-                return false;
-            }else{
-                return true;
-            }
-        }
-        if(dp[turn][stonesLeft]!=-1)return dp[turn][stonesLeft];
-        bool result = (turn == 1)?false:true;
-        for(int i=1; i*i<=stonesLeft; i++){
-            if(turn == 1){
-                result = result || solveForAlice(!turn, stonesLeft-i*i);
-            }else{
-                result = result && solveForAlice(!turn, stonesLeft-i*i);
-            }
-        }
-        return dp[turn][stonesLeft]=result;
-    }
 public:
-    bool winnerSquareGame(int n) {
-        memset(dp,-1,sizeof(dp));
-        return solveForAlice(1,n);        
+    bool winnerSquareGame(int n) { 
+        vector<vector<bool>> dp(2,vector<bool>(n+1));
+        dp[0][0]=true;
+        dp[1][0]=false;
+        for(int i=1; i<=n; i++){ 
+            //starting
+            bool result = false;
+            for(int j=1; j*j<=i; j++){
+                result = result || dp[0][i-j*j];
+            }
+            dp[1][i]=result;
+            result=true;
+            for(int j=1; j*j<=i; j++){
+                result = result && dp[1][i-j*j];
+            }
+            dp[0][i]=result;
+            //ending
+        }
+        return dp[1][n];      
     }
 };
