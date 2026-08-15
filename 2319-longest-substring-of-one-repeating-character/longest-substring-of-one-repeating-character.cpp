@@ -1,97 +1,82 @@
 class Solution {
-private:
-    struct Node {char leftChar; char rightChar; int length; int prefix; int suffix; int best;
-};
+public:
+    struct Node {
+        int pre = 0; 
+        int suf = 0;
+        int maxLen = 0;
+        char leftChar = 0;
+        char rightChar = 0;
+    };
 
-    vector<Node> tree;
+    int n;
+    vector<Node> segTree; //segmen tree size 4*n
 
-    Node mergeNodes(const Node& left, const Node& right) {
+    Node merge(const Node& L, const Node& R, int leftLen, int rightLen) {
         Node res;
 
-        res.leftChar = left.leftChar;
-        res.rightChar = right.rightChar;
-        res.length = left.length + right.length;
+        res.leftChar  = L.leftChar;
+        res.rightChar = R.rightChar;
 
-        res.prefix = left.prefix;
-
-        if (
-            left.rightChar == right.leftChar &&
-            left.prefix == left.length
-        ) {
-            res.prefix = left.length + right.prefix;
+        res.pre = L.pre;
+        if (L.pre == leftLen && L.rightChar == R.leftChar) {
+            res.pre = L.pre + R.pre;
         }
 
-        res.suffix = right.suffix;
-
-        if (
-            left.rightChar == right.leftChar &&
-            right.suffix == right.length
-        ) {
-            res.suffix = right.length + left.suffix;
+        res.suf = R.suf;
+        if (R.suf == rightLen && L.rightChar == R.leftChar) {
+            res.suf = R.suf + L.suf;
         }
 
-        res.best = max(left.best, right.best);
-
-        if (left.rightChar == right.leftChar) {
-            res.best = max(
-                res.best,
-                left.suffix + right.prefix
-            );
+        res.maxLen = max(L.maxLen, R.maxLen);
+        if (L.rightChar == R.leftChar) {
+            res.maxLen = max(res.maxLen, L.suf + R.pre);
         }
 
         return res;
     }
 
-    void build( int node, int start, int end, const string& s
-    ) {
-        if (start == end) {
-            tree[node] = {s[start], s[start], 1, 1, 1, 1};
+    void buildSegmentTree(int i, int l, int r, string& s) {
+        if (l == r) {
+            segTree[i] = { 1, 1, 1, s[l], s[l] };
             return;
         }
-
-        int mid = (start + end) / 2;
-
-        build(node * 2, start, mid, s);
-        build(node * 2 + 1, mid + 1, end, s);
-
-        tree[node] = mergeNodes(
-            tree[node * 2],
-            tree[node * 2 + 1]
-        );
+        int mid = l + (r - l) / 2;
+        buildSegmentTree(2 * i + 1, l, mid, s);
+        buildSegmentTree(2 * i + 2, mid + 1, r, s);
+        segTree[i] = merge(segTree[2 * i + 1], segTree[2 * i + 2], mid - l + 1, r - mid);
     }
 
-    void update( int node, int start, int end, int index, char ch ) {
-        if (start == end) {
-            tree[node] = {ch, ch, 1, 1, 1, 1};
+    void update(int i, int l, int r, int pos, char ch) {
+        if (l == r) { //l == r == pos
+            segTree[i] = { 1, 1, 1, ch, ch };
             return;
         }
-
-        int mid = (start + end) / 2;
-
-        if (index <= mid) {
-            update(node * 2, start, mid, index, ch);
+        int mid = l + (r - l) / 2;
+        if (pos <= mid) {
+            update(2 * i + 1, l, mid, pos, ch);
         } else {
-            update(node * 2 + 1, mid + 1, end, index, ch);
+            update(2 * i + 2, mid + 1, r, pos, ch);
         }
-
-        tree[node] = mergeNodes(
-            tree[node * 2],
-            tree[node * 2 + 1]
-        );
+        segTree[i] = merge(segTree[2 * i + 1], segTree[2 * i + 2], mid - l + 1, r - mid);
     }
 
-public:
-    vector<int> longestRepeating( string s, string queryCharacters, vector<int>& queryIndices) {
-        int n = s.size();
-        tree.resize(4 * n);
-        build(1, 0, n - 1, s);
-        vector<int> answer;
+    vector<int> longestRepeating(string s, string queryCharacters, vector<int>& queryIndices) {
+        n = s.size();
+        segTree.assign(4 * n, Node()); //segmen tree size 4*n
 
-        for (int i = 0; i < queryIndices.size(); i++) {
-            update(1, 0, n - 1, queryIndices[i], queryCharacters[i]);
-            answer.push_back(tree[1].best);
+        buildSegmentTree(0, 0, n - 1, s);
+
+        int k = queryIndices.size();
+
+        vector<int> result(k);
+        for (int i = 0; i < k; i++) {
+            int pos = queryIndices[i];
+            char ch = queryCharacters[i];
+            update(0, 0, n - 1, pos, ch);
+            
+            result[i] = segTree[0].maxLen; //root node covers entire string
         }
 
-        return answer;
+        return result;
     }
 };
