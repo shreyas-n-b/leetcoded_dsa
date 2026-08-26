@@ -24,20 +24,15 @@ class Solution {
 public:
     string shortestBeautifulSubstring(string s, int k) {
         int n = s.length();
-
         int i = 0;
         int ones = 0;
-
         string ans = "";
         int minLen = INT_MAX;
-
         for (int j = 0; j < n; j++) {
-
             // Add s[j] to the window
             if (s[j] == '1') {
                 ones++;
             }
-
             // We have more than k ones.
             // Move i until we have exactly k ones.
             while (ones > k) {
@@ -46,19 +41,14 @@ public:
                 }
                 i++;
             }
-
             // We have exactly k ones.
             if (ones == k) {
-
                 // Remove unnecessary leading zeroes.
                 while (s[i] == '0') {
                     i++;
                 }
-
                 int len = j - i + 1;
-
                 string curr = s.substr(i, len);
-
                 if (len < minLen) {
                     minLen = len;
                     ans = curr;
@@ -68,7 +58,6 @@ public:
                 }
             }
         }
-
         return ans;
     }
 };
