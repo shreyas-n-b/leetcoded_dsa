@@ -17,7 +17,7 @@ public:
                 n, vector<vector<bool>>(
                     energy + 1, vector<bool>(1 << cnt, false))));
         queue<tuple<int,int,int,int>> q;
-        q.push({x, y, energy, (1 << cnt) - 1});
+        q.emplace(x, y, energy, (1 << cnt) - 1);
         vis[x][y][energy][(1 << cnt) - 1] = true;
         vector<int> dirs = {-1, 0, 1, 0, -1};
         int ans = 0;
@@ -36,7 +36,7 @@ public:
                             nxt_mask &= ~(1 << d[nx][ny]);
                         if (!vis[nx][ny][nxt_energy][nxt_mask]) {
                             vis[nx][ny][nxt_energy][nxt_mask] = true;
-                            q.push({nx, ny, nxt_energy, nxt_mask});
+                            q.emplace(nx, ny, nxt_energy, nxt_mask);
                         }
                     }
                 }
