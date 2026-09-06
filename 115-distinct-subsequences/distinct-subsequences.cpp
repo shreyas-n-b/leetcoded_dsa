@@ -42,9 +42,23 @@ class Solution {
     }
 public:
     int numDistinct(string s, string t) {
-        int n = s.length();
-        int m = t.length();
-        dp.assign(n, vector<long long>(m, -1));
-        return solve(0, 0, s, t);
+        // int n = s.length();
+        // int m = t.length();
+        // dp.assign(n, vector<long long>(m, -1));
+        // return solve(0, 0, s, t);
+        int m=t.length();
+        int n=s.length();
+        vector<vector<unsigned long long>> dp(m+1,vector<unsigned long long>(n+1));
+        for(int j=0; j<=m; j++)dp[j][n]=0;
+        for(int i=0; i<=n; i++)dp[m][i]=1;
+        for(int j=m-1; j>=0; j--){
+            for(int i=n-1; i>=0; i--){
+                dp[j][i]=dp[j][i+1];
+                if(s[i]==t[j]){
+                    dp[j][i] += dp[j+1][i+1];
+                }
+            }
+        }
+        return dp[0][0];
     }
 };
