@@ -10,7 +10,7 @@ class Solution {
             }
         }       
     }
-    long long solve(vector<int> nums){
+    long long solve(vector<int>& nums){
         int n=nums.size();
         if(n<3)return 1;
         int root=nums[0];
