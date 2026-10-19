@@ -10,7 +10,7 @@ class Solution {
             }
         }       
     }
-    int solve(vector<int> nums){
+    long long solve(vector<int> nums){
         int n=nums.size();
         if(n<3)return 1;
         int root=nums[0];
@@ -30,6 +30,6 @@ class Solution {
 public:
     int numOfWays(vector<int>& nums) {
         populateTable(nums.size());
-        return solve(nums)-1;        
+        return (int)solve(nums)-1;        
     }
 };
