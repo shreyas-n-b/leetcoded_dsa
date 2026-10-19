@@ -1,27 +1,35 @@
 class Solution {
-    const long long MOD = 1e9 + 7;
-    vector<vector<long long>> C;
-
-    long long ways(vector<int>& a) {
-        int n = a.size();
-        if (n <= 2) return 1;
-        vector<int> l, r;
-        for (int i = 1; i < n; i++) {
-            if (a[i] < a[0]) l.push_back(a[i]);
-            else r.push_back(a[i]);
-        }
-        return C[n - 1][l.size()] * ways(l) % MOD * ways(r) % MOD;
+    long long MOD=7+1e9;
+    vector<vector<long long>> cTable;
+    void populateTable(int n){
+        for(int j=0; j<n+1; j++){
+            vector<long long> row(j+1,1);
+            cTable.push_back(row);
+            for(int i=1; i<j; i++){
+                cTable[j][i]=(cTable[j-1][i]+cTable[j-1][i-1])%MOD;
+            }
+        }       
     }
-
+    int solve(vector<int> nums){
+        int n=nums.size();
+        if(n<3)return 1;
+        int root=nums[0];
+        vector<int> left_array,right_array;
+        for(int i=1; i<n; i++){
+            if(nums[i]<root){
+                left_array.push_back(nums[i]);
+            }else{
+                right_array.push_back(nums[i]);
+            }
+        }
+        long long x=solve(left_array);
+        long long y=solve(right_array);
+        long long z=cTable[n-1][left_array.size()];
+        return (((z*x)%MOD)*y)%MOD;
+    }
 public:
     int numOfWays(vector<int>& nums) {
-        int n = nums.size();
-        C.assign(n + 1, vector<long long>(n + 1, 0));
-        for (int i = 0; i <= n; i++) {
-            C[i][0] = 1;
-            for (int j = 1; j <= i; j++)
-                C[i][j] = (C[i - 1][j - 1] + C[i - 1][j]) % MOD;
-        }
-        return (ways(nums) - 1 + MOD) % MOD;
+        populateTable(nums.size());
+        return solve(nums)-1;        
     }
 };
